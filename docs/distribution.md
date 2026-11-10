@@ -4,13 +4,13 @@ wide 0.1.8 is an early native macOS Apple Silicon CLI release. The executable is
 
 ## Prebuilt installation
 
-The intended installer is:
+The custom-domain installer is:
 
 ```sh
 curl -fsSL https://wide.clzmj.dev/install | sh
 ```
 
-**Installer endpoint and downloadable release availability are pending verification.** This command is the planned installation interface, not a claim that publication is complete. The prebuilt path will not require Rust or Bun and defaults to `~/.local/bin`.
+[Release 0.1.8](https://github.com/clzmj/wide/releases/tag/v0.1.8) is published and its downloaded archive, SHA-256, ARM64 architecture, ad-hoc signature, and `--version` were checked locally. The installer also passed with that public archive and native macOS tools, supplying only the manifest locally. **The command above is not live yet: `wide.clzmj.dev` still needs DNS activation and HTTPS verification.** The prebuilt path requires no Rust or Bun and defaults to `~/.local/bin`.
 
 If necessary, add the following to your shell configuration manually:
 
@@ -22,7 +22,7 @@ Open a new terminal after changing your shell configuration. Verify an installed
 
 ## Build from source
 
-The planned public repository is `https://github.com/clzmj/wide`. Once available, source installation requires Rust and Apple command-line tools:
+The public repository is [clzmj/wide](https://github.com/clzmj/wide). Source installation requires Rust and Apple command-line tools:
 
 ```sh
 cargo install --git https://github.com/clzmj/wide --locked
@@ -67,3 +67,44 @@ cp ./completions/wide.fish ~/.config/fish/completions/wide.fish
 ## Public package boundary
 
 The public source/release package should contain the CLI, build metadata, license, completion files, and public documentation. Raw captures, identifying hardware metadata, proprietary firmware, extracted code, and third-party research references remain outside the public distribution. No Rust/Bun runtime, OpenDisplay application, normal GUI, or background daemon is required by the prebuilt executable.
+
+## Maintaining a release
+
+[Check](../.github/workflows/check.yml) runs on pull requests, pushes to `main`, and calls from [Release](../.github/workflows/release.yml). It verifies a native ARM64 macOS runner, then checks Rust formatting, Clippy with warnings denied, Rust tests, offline Python fixtures (including installer tests), and shell/completion syntax. No monitor is needed. Run the local checks before tagging:
+
+```sh
+bash diagnostics/checks.sh
+# Installer tests alone, with local fixtures:
+uv run --script tests/test_install.py
+```
+
+The local check script also builds the optimized ARM64 executable and writes local validation logs. These are software checks, not hardware qualification.
+
+Release runs for pushed `v*` tags and depends on Check succeeding. The tag must exactly match `v` plus the version in `Cargo.toml`, with a numeric `major.minor.patch` version. The release job builds the default-feature ARM64 binary and invokes [package-release.sh](../scripts/package-release.sh). Packaging verifies native architecture and binary version, ad-hoc signs and verifies the copied executable, and allowlists only the binary, MIT license, and completions. Ad-hoc signing is not notarization.
+
+The GitHub release receives `wide-aarch64-apple-darwin.tar.gz` and its `.sha256` checksum file. Only after release success does the Pages job deploy the installer and `latest.json`, containing that release's version, download URL, and SHA-256. The site declares `wide.clzmj.dev` as its custom domain. Workflow configuration alone does not establish that the endpoint or a particular release is live; verify both after deployment.
+
+Publishing uses GitHub's built-in repository-scoped token with `contents: write` only in the release job. Pages uses its own job permissions (`contents: read`, `pages: write`, `id-token: write`) and GitHub's Pages/OIDC deployment flow. The workflow does not use a shared Cloudflare token.
+
+For a future release, update `Cargo.toml` and `Cargo.lock`, run the checks, commit and push the reviewed changes, then tag that commit. For example, after setting the package version to `0.1.9`:
+
+```sh
+git tag v0.1.9
+git push origin v0.1.9
+```
+
+Review the Check, Release, and Pages results, download and verify the asset checksum, and test the published installer before announcing availability. This release process does not run the hardware matrix.
+
+
+## Initial hosting setup
+
+GitHub Pages is enabled with `build_type: workflow` and custom domain `wide.clzmj.dev`. Its `github-pages` environment allows `main` and release tags matching `v*`; GitHub initially allowed only `main`, which rejected the first tag deployment before a runner started. Adding the tag policy and rerunning only the failed Pages job succeeded without republishing the release asset.
+
+DNS must have a DNS-only CNAME `wide` pointing to `clzmj.github.io`. After the DNS check and certificate issuance succeed, enable HTTPS enforcement in the repository's Pages settings. Then check the actual endpoint without bypassing TLS verification:
+
+```sh
+curl -fsSL https://wide.clzmj.dev/install -o /tmp/wide-install.sh
+sh /tmp/wide-install.sh --dry-run
+```
+
+The site is deployed, but custom-domain DNS and HTTPS remain unverified as of 2026-11-09. No other project's Cloudflare credentials were used. Raw investigation files remain ignored in the canonical local repository; they were not uploaded to GitHub.
