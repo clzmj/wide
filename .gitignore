@@ -1,0 +1,17 @@
+/target/
+/dist/
+/captures/
+/references/
+/experiments/
+.DS_Store
+__pycache__/
+/docs/*
+!/docs/usage.md
+!/docs/supported-hardware.md
+!/docs/distribution.md
+/diagnostics/*
+!/diagnostics/checks.sh
+!/diagnostics/scan-vcp.sh
+!/diagnostics/capture-state.sh
+!/diagnostics/compare-states.py
+!/diagnostics/full-matrix.py

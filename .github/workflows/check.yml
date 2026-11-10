@@ -1,0 +1,43 @@
+name: Check
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+  workflow_call:
+
+permissions: {}
+
+jobs:
+  offline:
+    # GitHub's standard macos-15 image is ARM64; verify rather than cross-run Intel.
+    runs-on: macos-15
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Verify native runner and Rust tools
+        run: |
+          test "$(uname -m)" = arm64
+          rustup target add aarch64-apple-darwin
+          rustup component add rustfmt clippy
+      - uses: astral-sh/setup-uv@eb1897b8dc4b5d5bfe39a428a8f2304605e0983c # v7.0.0
+        with:
+          version: '0.9.8'
+          enable-cache: false
+      - name: Rust format, lint, and offline monitor tests
+        run: |
+          cargo fmt --all --check
+          cargo clippy --locked --all-targets --target aarch64-apple-darwin -- -D warnings
+          cargo test --locked --target aarch64-apple-darwin
+      - name: Python fixtures only
+        run: uv run --no-project --offline python -m unittest discover -s tests -p 'test_*.py'
+      - name: Shell syntax
+        run: |
+          bash -n scripts/package-release.sh
+          bash -n install.sh
+          for script in diagnostics/*.sh completions/wide.bash; do bash -n "$script"; done
+          zsh -n completions/_wide

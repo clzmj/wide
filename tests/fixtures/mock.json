@@ -1,0 +1,7 @@
+{
+  "display": {"registry_id": 1, "name": "Mock G93SC", "manufacturer": "SAM", "product_id": 29851, "serial": 1, "location": "External", "edid_hex": null},
+  "replies": {
+    "0x60": "6e880200600000030005d2",
+    "0xE2": "6e880201e20000ff0000a8"
+  }
+}

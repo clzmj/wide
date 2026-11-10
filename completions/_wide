@@ -1,0 +1,5 @@
+#compdef wide
+_arguments '1:command:(status advanced)' '*:argument:->advanced'
+if [[ $state == advanced ]]; then
+  _values 'advanced operation' plan apply sound reconnect modes list info capabilities ddc diagnose mode preset
+fi

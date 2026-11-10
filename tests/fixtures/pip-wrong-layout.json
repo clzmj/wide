@@ -1,0 +1,5 @@
+{
+  "display": {"registry_id": 1, "name": "Odyssey G93SC", "manufacturer": "SAM", "product_id": 29851, "serial": 42, "location": "External", "edid_hex": null},
+  "replies": {"0xE2": "6e880200e200007f35ccd0"},
+  "after_write": {"0xE2": "6e880200e200007f35cfd3"}
+}

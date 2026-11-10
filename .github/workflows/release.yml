@@ -1,0 +1,114 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions: {}
+
+concurrency:
+  group: wide-release
+  cancel-in-progress: false
+
+jobs:
+  check:
+    permissions:
+      contents: read
+    uses: ./.github/workflows/check.yml
+
+  release:
+    needs: check
+    if: github.repository == 'clzmj/wide'
+    runs-on: macos-15
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      sha256: ${{ steps.package.outputs.sha256 }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Check version and native architecture
+        id: version
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          test "$(uname -m)" = arm64
+          version=$(awk '/^\[package\]$/{package=1;next} /^\[/{package=0} package && $1=="version" {gsub(/"/,"",$3);print $3;exit}' Cargo.toml)
+          [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]
+          test "$RELEASE_TAG" = "v$version"
+          printf 'version=%s\n' "$version" >> "$GITHUB_OUTPUT"
+      - name: Build default-feature ARM64 binary
+        run: |
+          rustup target add aarch64-apple-darwin
+          cargo build --release --locked --target aarch64-apple-darwin
+      - name: Sign, verify, and package allowlisted files
+        id: package
+        run: |
+          bash scripts/package-release.sh target/aarch64-apple-darwin/release/wide dist
+          sha256=$(awk '{print $1}' dist/wide-aarch64-apple-darwin.tar.gz.sha256)
+          printf 'sha256=%s\n' "$sha256" >> "$GITHUB_OUTPUT"
+      - name: Publish release assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          RELEASE_TAG: ${{ github.ref_name }}
+          RELEASE_VERSION: ${{ steps.version.outputs.version }}
+        run: |
+          gh release create "$RELEASE_TAG" \
+            dist/wide-aarch64-apple-darwin.tar.gz \
+            dist/wide-aarch64-apple-darwin.tar.gz.sha256 \
+            --verify-tag --title "wide $RELEASE_VERSION" \
+            --notes 'Experimental macOS ARM64 CLI. See the README for supported hardware and validation limits.'
+
+  pages:
+    needs: release
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
+      - name: Build installer site from the published release
+        env:
+          RELEASE_VERSION: ${{ needs.release.outputs.version }}
+          RELEASE_SHA256: ${{ needs.release.outputs.sha256 }}
+          RELEASE_REPOSITORY: ${{ github.repository }}
+        run: |
+          mkdir -p site
+          install -m 644 install.sh site/install
+          printf 'wide.clzmj.dev\n' > site/CNAME
+          touch site/.nojekyll
+          jq -n --arg version "$RELEASE_VERSION" --arg sha256 "$RELEASE_SHA256" \
+            --arg url "https://github.com/$RELEASE_REPOSITORY/releases/download/v$RELEASE_VERSION/wide-aarch64-apple-darwin.tar.gz" \
+            '{version:$version,url:$url,sha256:$sha256}' > site/latest.json
+          cat > site/index.html <<'HTML'
+          <!doctype html>
+          <html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width">
+          <title>wide</title><main><h1>wide</h1>
+          <p>An experimental macOS ARM64 CLI for Samsung G93SC monitor layouts.</p>
+          <pre>curl -fsSL https://wide.clzmj.dev/install | sh</pre>
+          <p>Read the <a href="https://github.com/clzmj/wide">source and hardware validation limits</a> before use.</p>
+          </main></html>
+          HTML
+          tar -cf "$RUNNER_TEMP/artifact.tar" -C site .
+      - name: Upload Pages artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: github-pages
+          path: ${{ runner.temp }}/artifact.tar
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 1
+      - name: Publish Pages only after release success
+        id: deploy
+        uses: actions/deploy-pages@d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e # v4.0.5
