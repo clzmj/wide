@@ -12,7 +12,7 @@ wide **0.1.8** is an early macOS Apple Silicon release for the **Samsung Odyssey
 
 ## Install
 
-[Release 0.1.8](https://github.com/clzmj/wide/releases/tag/v0.1.8) is published for macOS Apple Silicon. The prebuilt installer requires no Rust or Bun. **The hosted command below is waiting for custom-domain DNS activation; it is not live yet.**
+[Release 0.1.8](https://github.com/clzmj/wide/releases/tag/v0.1.8) is published for macOS Apple Silicon. The prebuilt installer requires no Rust or Bun. The hosted installer has been verified end to end over HTTPS.
 
 ```sh
 curl -fsSL https://wide.clzmj.dev/install | sh

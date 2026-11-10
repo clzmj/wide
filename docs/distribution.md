@@ -10,7 +10,7 @@ The custom-domain installer is:
 curl -fsSL https://wide.clzmj.dev/install | sh
 ```
 
-[Release 0.1.8](https://github.com/clzmj/wide/releases/tag/v0.1.8) is published and its downloaded archive, SHA-256, ARM64 architecture, ad-hoc signature, and `--version` were checked locally. The installer also passed with that public archive and native macOS tools, supplying only the manifest locally. **The command above is not live yet: `wide.clzmj.dev` still needs DNS activation and HTTPS verification.** The prebuilt path requires no Rust or Bun and defaults to `~/.local/bin`.
+[Release 0.1.8](https://github.com/clzmj/wide/releases/tag/v0.1.8) is published and its downloaded archive, SHA-256, ARM64 architecture, ad-hoc signature, and `--version` were checked locally. The exact hosted `curl -fsSL https://wide.clzmj.dev/install | sh` command was then verified with a temporary `WIDE_INSTALL_DIR`, downloading the real public manifest and release asset through normal TLS verification. A temporary, process-scoped curl DNS-over-HTTPS configuration bypassed the local resolver's cached earlier NXDOMAIN; no system DNS setting was changed. The installed binary matched the verified release; `--version` and `--help` passed without monitor access. The prebuilt path requires no Rust or Bun and defaults to `~/.local/bin`.
 
 If necessary, add the following to your shell configuration manually:
 
@@ -107,4 +107,4 @@ curl -fsSL https://wide.clzmj.dev/install -o /tmp/wide-install.sh
 sh /tmp/wide-install.sh --dry-run
 ```
 
-The site is deployed, but custom-domain DNS and HTTPS remain unverified as of 2026-11-09. No other project's Cloudflare credentials were used. Raw investigation files remain ignored in the canonical local repository; they were not uploaded to GitHub.
+The custom-domain installer was verified live on 2026-11-09, with HTTPS enforcement enabled. The authenticated Cloudflare operator CLI created the single DNS record; no other project's Cloudflare credentials were used. GitHub initially cached the missing DNS result. Removing and readding the custom domain once after DNS propagation restarted certificate provisioning, following [GitHub's documented recovery](https://docs.github.com/en/pages/getting-started-with-github-pages/securing-your-github-pages-site-with-https#troubleshooting-certificate-provisioning-certificate-not-yet-created-error). The local resolver still retained an earlier NXDOMAIN result at verification time; public DNS and GitHub validated the record. This transient negative-cache result must expire before the unmodified command works through that resolver. Raw investigation files and Cloudflare CLI account caches remain ignored in the canonical local repository; they were not uploaded to GitHub.

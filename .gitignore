@@ -15,3 +15,4 @@ __pycache__/
 !/diagnostics/capture-state.sh
 !/diagnostics/compare-states.py
 !/diagnostics/full-matrix.py
+/.cloudflare/
