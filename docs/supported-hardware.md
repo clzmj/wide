@@ -1,6 +1,6 @@
 # Supported hardware and validation
 
-wide targets **macOS on Apple Silicon** and the **Samsung Odyssey OLED G9 G93SC with firmware 1011.0**. Patch **0.1.9** adds the observed DisplayPort fullscreen identity and passed native read-only validation plus 102 offline checks, including CLI and CoreGraphics identity-fallback regressions. Publication and installer verification for 0.1.9 are pending; 0.1.8 remains the verified published baseline. Other monitor models, Intel Macs, operating systems, firmware revisions, and cable/adapter combinations are not established as supported by this validation.
+wide targets **macOS on Apple Silicon** and the **Samsung Odyssey OLED G9 G93SC with firmware 1011.0**. Patch **0.1.9** adds the observed DisplayPort fullscreen identity and passed native read-only validation plus 102 offline checks, including CLI and CoreGraphics identity-fallback regressions. The published 0.1.9 installer was verified and the installed terminal form opened correctly on the DisplayPort connection; Escape cancelled with no changes. Other monitor models, Intel Macs, operating systems, firmware revisions, and cable/adapter combinations are not established as supported by this validation.
 
 ## Tested setup
 

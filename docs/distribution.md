@@ -1,6 +1,6 @@
 # Distribution
 
-wide is an early native macOS Apple Silicon CLI release. The executable is `wide`; the Rust package is also named `wide`. Original project code uses the MIT license. **0.1.9 is the current patch target**, adding recognition of the observed G93SC DisplayPort fullscreen identity `0x749c`. It passed native read-only status validation on DisplayPort at 5120×1440/240 Hz with no setting or resolution writes, plus 102 offline checks. Publication and published-installer verification for 0.1.9 are pending; 0.1.8 remains the verified published baseline described below. This identity patch does not establish DisplayPort layout transitions, audio, rebinding across layouts, or two-computer validation.
+wide is an early native macOS Apple Silicon CLI release. The executable is `wide`; the Rust package is also named `wide`. Original project code uses the MIT license. **0.1.9 is published**, adding recognition of the observed G93SC DisplayPort fullscreen identity `0x749c`. It passed native read-only status validation on DisplayPort at 5120×1440/240 Hz with no setting or resolution writes, plus 102 offline checks. Its hosted installer, archive checksum, ad-hoc signature, and installed version were verified. The installed form identified DisplayPort correctly and exited with no changes when Escape was pressed. This identity patch does not establish DisplayPort layout transitions, audio, rebinding across layouts, or two-computer validation.
 
 ## Prebuilt installation
 
@@ -86,11 +86,11 @@ The GitHub release receives `wide-aarch64-apple-darwin.tar.gz` and its `.sha256`
 
 Publishing uses GitHub's built-in repository-scoped token with `contents: write` only in the release job. Pages uses its own job permissions (`contents: read`, `pages: write`, `id-token: write`) and GitHub's Pages/OIDC deployment flow. The workflow does not use a shared Cloudflare token.
 
-For the prepared 0.1.9 patch, update `Cargo.toml` and `Cargo.lock`, run the checks, commit and push the reviewed changes, then tag that commit. The following are publication instructions, not confirmation that the tag or release exists:
+For a future patch, update `Cargo.toml` and `Cargo.lock`, run the checks, commit and push the reviewed changes, then tag that commit. For example, after setting version 0.1.10:
 
 ```sh
-git tag v0.1.9
-git push origin v0.1.9
+git tag v0.1.10
+git push origin v0.1.10
 ```
 
 Review the Check, Release, and Pages results, download and verify the asset checksum, and test the published installer before announcing availability. This release process does not run the hardware matrix.

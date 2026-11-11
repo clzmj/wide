@@ -8,11 +8,11 @@ wide
 
 The interactive form offers **Full-screen**, **Split view → Left/Right**, and **Picture in picture → Big/Small**. Left/right and big/small describe this Mac's picture. Review the preview and confirm before applying; No is selected by default and Esc cancels.
 
-wide is an early macOS Apple Silicon CLI for the **Samsung Odyssey OLED G9 G93SC, firmware 1011.0**. Patch **0.1.9** adds recognition of the observed DisplayPort fullscreen identity and passed native read-only validation plus 102 offline checks. Publication and installer verification for 0.1.9 are pending. It has no normal GUI, background daemon, or OpenDisplay dependency.
+wide is an early macOS Apple Silicon CLI for the **Samsung Odyssey OLED G9 G93SC, firmware 1011.0**. Patch **0.1.9** adds recognition of the observed DisplayPort fullscreen identity and passed native read-only validation plus 102 offline checks. Release 0.1.9 and its hosted installer have been verified. It has no normal GUI, background daemon, or OpenDisplay dependency.
 
 ## Install
 
-[Release 0.1.8](https://github.com/clzmj/wide/releases/tag/v0.1.8) is the verified published baseline for macOS Apple Silicon; 0.1.9 is the pending patch target. The prebuilt installer requires no Rust or Bun. Its end-to-end HTTPS verification applies to 0.1.8, not yet to 0.1.9.
+[Release 0.1.9](https://github.com/clzmj/wide/releases/tag/v0.1.9) is published for macOS Apple Silicon. Its hosted installer and installed version were verified over HTTPS. The prebuilt installer requires no Rust or Bun.
 
 ```sh
 curl -fsSL https://wide.clzmj.dev/install | sh
