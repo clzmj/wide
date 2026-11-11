@@ -93,7 +93,7 @@ fn pip_write_requested(command: &AdvancedCommand) -> Result<bool, String> {
 fn check_pip_display(display: &display::Display) -> Result<(), String> {
     if display.manufacturer.as_deref() != Some("SAM")
         || !display.name.to_ascii_uppercase().contains("G93SC")
-        || !matches!(display.product_id, Some(0x749b | 0x745e | 0x7462 | 0x7461))
+        || !display.product_id.is_some_and(display::is_g93sc_product_id)
         || display.location != "External"
     {
         return Err("PiP enable is restricted to the verified external Samsung G93SC identity; no write sent".into());

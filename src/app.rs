@@ -23,7 +23,7 @@ const COMPLETE_PROFILE_VERIFIED: bool = true;
 pub fn supported_display(d: &Display) -> bool {
     d.manufacturer.as_deref() == Some("SAM")
         && d.name.to_ascii_uppercase().contains("G93SC")
-        && matches!(d.product_id, Some(0x749b | 0x745e | 0x7462 | 0x7461))
+        && d.product_id.is_some_and(display::is_g93sc_product_id)
         && d.location == "External"
         && d.serial.is_some_and(|s| s != 0)
 }

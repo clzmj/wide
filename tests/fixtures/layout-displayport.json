@@ -1,0 +1,20 @@
+{
+  "display": {
+    "registry_id": 1,
+    "name": "Mock Odyssey G93SC",
+    "manufacturer": "SAM",
+    "product_id": 29852,
+    "serial": 42,
+    "location": "External",
+    "edid_hex": null,
+    "active_width": 5120,
+    "active_height": 1440,
+    "cg_display_id": 2,
+    "connection": "DisplayPort"
+  },
+  "replies": {
+    "0xE2": "6e880200e200007f35cfd3",
+    "0xE3": "6e880200e3005151001047",
+    "0x60": "6e880200600000120011d7"
+  }
+}

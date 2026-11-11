@@ -17,7 +17,7 @@ from pathlib import Path
 
 STATES = ("fullscreen", "split-left", "split-right", "pip-big", "pip-small")
 S, F, R = "pip-small", "fullscreen", "split-right"
-EXPECTED_PRODUCTS = {0x749B, 0x745E, 0x7462, 0x7461}
+EXPECTED_PRODUCTS = {0x749B, 0x749C, 0x745E, 0x7462, 0x7461}
 EXPECTED_RESOLUTION = {
     "fullscreen": (5120, 1440), "pip-big": (5120, 1440),
     "split-left": (2560, 1440), "split-right": (2560, 1440),

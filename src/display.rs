@@ -1,6 +1,12 @@
 //! Enumerates external AV proxies; selection always uses the exact IORegistry ID.
 use serde::{Deserialize, Serialize};
 
+/// Observed G93SC EDID identities across inputs and picture roles.
+/// HDMI fullscreen uses 0x749b; DisplayPort fullscreen reports 0x749c.
+pub fn is_g93sc_product_id(product: u32) -> bool {
+    matches!(product, 0x749b | 0x749c | 0x745e | 0x7462 | 0x7461)
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct Display {
     pub registry_id: u64,
@@ -51,7 +57,7 @@ fn fill_single_external_identity(displays: &mut [Display], online: &[CgIdentity]
     };
     if externals.next().is_some()
         || cg.vendor != 0x4c2d
-        || !matches!(cg.product, 0x749b | 0x745e | 0x7462 | 0x7461)
+        || !is_g93sc_product_id(cg.product)
         || cg.serial == 0
         || cg.id == 0
         || cg.width == 0
@@ -640,6 +646,19 @@ mod tests {
         assert_eq!(proxies[0].serial, Some(42));
         assert_eq!(proxies[0].cg_display_id, Some(2));
         assert!(crate::app::supported_display(&proxies[0]));
+    }
+
+    #[test]
+    fn displayport_identity_fallback_accepts_the_observed_fullscreen_product() {
+        let mut proxies = vec![anonymous_proxy(9)];
+        let dp = CgIdentity {
+            product: 0x749c,
+            ..cg_external()
+        };
+        fill_single_external_identity(&mut proxies, &[dp]);
+        assert_eq!(proxies[0].product_id, Some(0x749c));
+        assert!(crate::app::supported_display(&proxies[0]));
+        assert!(proxies[0].connection.is_none());
     }
 
     #[test]

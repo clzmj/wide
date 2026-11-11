@@ -1,6 +1,6 @@
 # Distribution
 
-wide 0.1.8 is an early native macOS Apple Silicon CLI release. The executable is `wide`; the Rust package is also named `wide`. Original project code uses the MIT license.
+wide is an early native macOS Apple Silicon CLI release. The executable is `wide`; the Rust package is also named `wide`. Original project code uses the MIT license. **0.1.9 is the current patch target**, adding recognition of the observed G93SC DisplayPort fullscreen identity `0x749c`. It passed native read-only status validation on DisplayPort at 5120×1440/240 Hz with no setting or resolution writes, plus 102 offline checks. Publication and published-installer verification for 0.1.9 are pending; 0.1.8 remains the verified published baseline described below. This identity patch does not establish DisplayPort layout transitions, audio, rebinding across layouts, or two-computer validation.
 
 ## Prebuilt installation
 
@@ -86,7 +86,7 @@ The GitHub release receives `wide-aarch64-apple-darwin.tar.gz` and its `.sha256`
 
 Publishing uses GitHub's built-in repository-scoped token with `contents: write` only in the release job. Pages uses its own job permissions (`contents: read`, `pages: write`, `id-token: write`) and GitHub's Pages/OIDC deployment flow. The workflow does not use a shared Cloudflare token.
 
-For a future release, update `Cargo.toml` and `Cargo.lock`, run the checks, commit and push the reviewed changes, then tag that commit. For example, after setting the package version to `0.1.9`:
+For the prepared 0.1.9 patch, update `Cargo.toml` and `Cargo.lock`, run the checks, commit and push the reviewed changes, then tag that commit. The following are publication instructions, not confirmation that the tag or release exists:
 
 ```sh
 git tag v0.1.9

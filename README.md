@@ -8,11 +8,11 @@ wide
 
 The interactive form offers **Full-screen**, **Split view → Left/Right**, and **Picture in picture → Big/Small**. Left/right and big/small describe this Mac's picture. Review the preview and confirm before applying; No is selected by default and Esc cancels.
 
-wide **0.1.8** is an early macOS Apple Silicon release for the **Samsung Odyssey OLED G9 G93SC, firmware 1011.0**. It is a Rust CLI with no normal GUI, background daemon, or OpenDisplay dependency.
+wide is an early macOS Apple Silicon CLI for the **Samsung Odyssey OLED G9 G93SC, firmware 1011.0**. Patch **0.1.9** adds recognition of the observed DisplayPort fullscreen identity and passed native read-only validation plus 102 offline checks. Publication and installer verification for 0.1.9 are pending. It has no normal GUI, background daemon, or OpenDisplay dependency.
 
 ## Install
 
-[Release 0.1.8](https://github.com/clzmj/wide/releases/tag/v0.1.8) is published for macOS Apple Silicon. The prebuilt installer requires no Rust or Bun. The hosted installer has been verified end to end over HTTPS.
+[Release 0.1.8](https://github.com/clzmj/wide/releases/tag/v0.1.8) is the verified published baseline for macOS Apple Silicon; 0.1.9 is the pending patch target. The prebuilt installer requires no Rust or Bun. Its end-to-end HTTPS verification applies to 0.1.8, not yet to 0.1.9.
 
 ```sh
 curl -fsSL https://wide.clzmj.dev/install | sh
@@ -47,7 +47,7 @@ The supported input pair is **HDMI1 and DisplayPort**. Physical cable identity i
 
 ## Validation and limits
 
-Live validation used **one laptop connected through HDMI1**. No second independent computer or second active feed was validated. Picture and audio confirmations within that setup do not establish cross-computer switching or audio routing. Physical host-side DisplayPort operation and USB switching were not tested.
+Layout and audio validation used **one laptop connected through HDMI1**. On the same G93SC connected through DisplayPort, patched 0.1.9 successfully read native status: fullscreen, DisplayPort main/HDMI1 secondary, product identity `0x749c`, and a 5120×1440 mode at 240 Hz. No setting or resolution writes were sent during that check. DisplayPort layout transitions, audio, and rebinding across layouts remain unverified. No second independent computer or second active feed was validated. Picture and audio confirmations within the single-laptop setup do not establish cross-computer switching or audio routing. USB switching was not tested.
 
 All 25 directed combinations of the five friendly choices were exercised **across fixes and interrupted runs**: 23 verified, one blocked by a DDC read failure, and one partial result with video/resolution verified but an audio query timing out. This was not one clean, all-pass matrix. Register and CG mode checks do not prove every physical pane position, picture proportion, or audible result.
 

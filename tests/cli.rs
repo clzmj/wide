@@ -286,3 +286,50 @@ fn pip_enable_noops_when_enabled_and_rejects_other_saved_layouts() {
             .contains("no write sent"));
     }
 }
+
+#[test]
+fn displayport_identity_is_selected_and_scopes_friendly_plans() {
+    // Sanitized observed DP identity; register replies are synthetic fixture state.
+    let fixture = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/tests/fixtures/layout-displayport.json"
+    );
+    let status = cli(&["--json", "--mock", fixture, "status"]);
+    assert!(
+        status.status.success(),
+        "{}",
+        String::from_utf8_lossy(&status.stdout)
+    );
+    let value: serde_json::Value = serde_json::from_slice(&status.stdout).unwrap();
+    assert_eq!(value["connection"], "DisplayPort");
+    for (choice, main) in [
+        ("fullscreen", "display_port"),
+        ("split-left", "display_port"),
+        ("split-right", "hdmi1"),
+        ("pip-big", "display_port"),
+        ("pip-small", "hdmi1"),
+    ] {
+        let result = cli(&["--json", "--mock", fixture, "advanced", "plan", choice]);
+        assert!(
+            result.status.success(),
+            "{}",
+            String::from_utf8_lossy(&result.stdout)
+        );
+        let value: serde_json::Value = serde_json::from_slice(&result.stdout).unwrap();
+        assert_eq!(value["dry_run"], true);
+        assert_eq!(value["plan"]["this_source"], "display_port");
+        assert_eq!(value["plan"]["target_main"], main);
+    }
+    let conflict = cli(&[
+        "--json",
+        "--mock",
+        fixture,
+        "advanced",
+        "plan",
+        "split-left",
+        "--port",
+        "hdmi1",
+    ]);
+    assert!(!conflict.status.success());
+    assert!(String::from_utf8_lossy(&conflict.stdout).contains("conflicts"));
+}
