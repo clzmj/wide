@@ -1,5 +1,7 @@
 # Distribution
 
+> Archived on 2026-11-10. Hosting and the installer endpoint have been removed; this document records the historical distribution setup.
+
 wide is an early native macOS Apple Silicon CLI release. The executable is `wide`; the Rust package is also named `wide`. Original project code uses the MIT license. **0.1.9 is published**, adding recognition of the observed G93SC DisplayPort fullscreen identity `0x749c`. It passed native read-only status validation on DisplayPort at 5120×1440/240 Hz with no setting or resolution writes, plus 102 offline checks. Its hosted installer, archive checksum, ad-hoc signature, and installed version were verified. The installed form identified DisplayPort correctly and exited with no changes when Escape was pressed. This identity patch does not establish DisplayPort layout transitions, audio, rebinding across layouts, or two-computer validation.
 
 ## Prebuilt installation

@@ -1,5 +1,10 @@
 # wide
 
+> **Archived on 2026-11-10.** This experiment has ended. The installer website,
+> DNS record, deployment infrastructure, and local installation were retired.
+> Source and release history are retained for reference. Instructions below
+> describe the historical project and are no longer maintained.
+
 Choose how your Mac appears on a Samsung ultrawide, from the terminal.
 
 ```sh
